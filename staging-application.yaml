@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nodejs-express-staging  # Staging uygulamanızın adı
+  namespace: argocd            # ArgoCD'nin namespace'i
+spec:
+  project: default             # ArgoCD projesi (varsayılan: default)
+  source:
+    repoURL: https://github.com/kursatartar/codeway-case.git # GitHub repo URL'si
+    targetRevision: staging      # Branch adı
+    path: chart-case           # Helm chart veya manifests dosyalarının yolu
+    helm:
+      valueFiles:
+        - staging-values.yaml  # Staging'e özel values.yaml dosyası
+  destination:
+    server: https://kubernetes.default.svc  # Kubernetes cluster adresi
+    namespace: staging         # Staging için ayrı bir namespace
+  syncPolicy:
+    automated:
+      prune: true              # Eski kaynakları temizler
+      selfHeal: true           # Kubernetes ile uyumsuzluğu düzeltir

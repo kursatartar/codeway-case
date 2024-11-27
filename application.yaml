@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default            # ArgoCD'deki proje adı (varsayılan: default)
   source:
-    repoURL: 'https://github.com/kursatartar/codeway-casegit'  # Proje repo URL'si
+    repoURL: 'https://github.com/kursatartar/codeway-case.git'  # Proje repo URL'si
     targetRevision: main       # Git branch (örnek: main)
     path: chart-case           # Helm chart'ın bulunduğu dizin
   destination:

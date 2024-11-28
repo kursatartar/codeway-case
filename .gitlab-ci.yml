@@ -1,21 +1,20 @@
 stages:
   - build
   - deploy
-
+ 
 variables:
   DOCKER_REGISTRY: "docker.io"
   IMAGE_NAME: "kursatartar/nodejs-express-mysql"
   HELM_RELEASE_NAME: "chart-case"
-  NAMESPACE: "staging"  # Bu staging ortamı olacak, production'a değiştirebilirsiniz
-  HELM_CHART_DIR: "./chart-case"  # Helm chart dizini
-  VALUES_FILE: "./chart-case/values.yml"  # Helm chart'ı için values dosyası
-  KUBERNETES_MASTER: "https://127.0.0.1:63670"  # Minikube veya başka bir Kubernetes master URL'si
-  KUBECONFIG: "$HOME/.kube/config"  # kubeconfig dosyanızın yolu
-
+  NAMESPACE: "default"
+  HELM_CHART_DIR: "./chart-case"
+  VALUES_FILE: "./chart-case/values.yml"
+  KUBECONFIG: "/root/.kube/config"  # Kubernetes config dosyasının yolu
+ 
 before_script:
   - echo "Logging into Docker Hub..."
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER"   # Docker Hub'a giriş
-
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin  # Docker Hub'a giriş
+ 
 # Docker imajını oluşturma ve push işlemi
 build:
   stage: build
@@ -28,7 +27,7 @@ build:
     - docker push $DOCKER_REGISTRY/$IMAGE_NAME:$CI_COMMIT_REF_NAME
   only:
     - main  # Bu iş sadece main branch'inde çalışacak
-
+ 
 # Deploy işlemi - staging ortamına deploy
 deploy_staging:
   stage: deploy

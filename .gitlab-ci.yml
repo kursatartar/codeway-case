@@ -9,6 +9,7 @@ variables:
   NAMESPACE: "default"
   HELM_CHART_DIR: "./chart-case"
   VALUES_FILE: "./chart-case/values.yml"
+  KUBECONFIG: "/root/.kube/config"  # Kubernetes config dosyasının yolu
 
 before_script:
   - echo "Logging into Docker Hub..."
@@ -37,6 +38,8 @@ deploy_main:
     - apk add --no-cache curl
     - curl -fsSL https://get.helm.sh/helm-v3.10.1-linux-amd64.tar.gz | tar -xzv
     - mv linux-amd64/helm /usr/local/bin/helm
+    - mkdir -p /root/.kube  # kubeconfig dosyasını oluşturacak dizini oluşturuyoruz
+    - echo "$KUBECONFIG" > /root/.kube/config  # GitLab CI ortam değişkenlerinden kubeconfig'i alıp kaydediyoruz
   script:
     - export KUBERNETES_MASTER=https://127.0.0.1:63670
     - echo "Deploying to production (main branch)..."

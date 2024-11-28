@@ -1,0 +1,50 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  # Docker registry ve Helm ile ilgili parametreler
+  DOCKER_REGISTRY: "docker.io"
+  IMAGE_NAME: "kursatartar/nodejs-express-mysql"
+  HELM_RELEASE_NAME: "chart-case"
+  NAMESPACE: "default"  # Kubernetes namespace (deploy sırasında kullanılacak)
+  HELM_CHART_DIR: "./chart-case"  # Helm chart'ınızın bulunduğu dizin
+  VALUES_FILE: "./chart-case/values.yml"  # Helm values dosyanız
+
+# Build aşaması: Docker imajını oluşturma
+build:
+  stage: build
+  script:
+    - echo "Building Docker image..."
+    - |
+      if [ "$CI_COMMIT_REF_NAME" == "main" ]; then
+        export IMAGE_TAG="latest"
+      elif [ "$CI_COMMIT_REF_NAME" == "staging" ]; then
+        export IMAGE_TAG="staging"
+      else
+        export IMAGE_TAG="dev"
+      fi
+    - echo "Tagging Docker image as $IMAGE_TAG"
+    - docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
+    - docker push $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+  only:
+    - main
+    - staging  # Bu iş sadece main ve staging branch'lerinde çalışacak
+
+# Deploy aşaması: Helm kullanarak Kubernetes'e dağıtım yapma (main için)
+deploy_main:
+  stage: deploy
+  script:
+    - echo "Deploying to production (main branch)..."
+    - helm upgrade --install $HELM_RELEASE_NAME $HELM_CHART_DIR -f $VALUES_FILE --namespace $NAMESPACE
+  only:
+    - main  # Deploy işlemi sadece main branch'inde yapılacak
+
+# Deploy aşaması: Helm kullanarak Kubernetes'e dağıtım yapma (staging için)
+deploy_staging:
+  stage: deploy
+  script:
+    - echo "Deploying to staging..."
+    - helm upgrade --install $HELM_RELEASE_NAME $HELM_CHART_DIR -f $VALUES_FILE --namespace $NAMESPACE
+  only:
+    - staging  # Deploy işlemi sadece staging branch'inde yapılacak

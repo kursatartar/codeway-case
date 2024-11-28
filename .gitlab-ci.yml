@@ -11,6 +11,7 @@ variables:
   HELM_CHART_DIR: "./chart-case"  # Helm chart'ınızın bulunduğu dizin
   VALUES_FILE: "./chart-case/values.yml"  # Helm values dosyanız
 
+image: node:16  # Node.js imajı
 # Build aşaması: Docker imajını oluşturma
 build:
   stage: build

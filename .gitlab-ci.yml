@@ -30,7 +30,7 @@ build:
 # Deploy işlemi - production (main branch)
 deploy_main:
   stage: deploy
-  image: node:16  # Node.js Docker imajı
+  image: docker:latest  # Node.js Docker imajı
   script:
     - echo "Deploying to production (main branch)..."
     - helm upgrade --install $HELM_RELEASE_NAME $HELM_CHART_DIR -f $VALUES_FILE --namespace $NAMESPACE
@@ -40,7 +40,7 @@ deploy_main:
 # Deploy işlemi - staging branch
 deploy_staging:
   stage: deploy
-  image: node:16  # Node.js Docker imajı
+  image: docker:latest  # Node.js Docker imajı
   script:
     - echo "Deploying to staging..."
     - helm upgrade --install $HELM_RELEASE_NAME $HELM_CHART_DIR -f $VALUES_FILE --namespace $NAMESPACE

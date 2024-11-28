@@ -5,32 +5,44 @@ stages:
 variables:
   DOCKER_REGISTRY: "docker.io"
   IMAGE_NAME: "kursatartar/nodejs-express-mysql"
-  IMAGE_TAG: "latest"  # Sadece latest tag kullanılacak
   HELM_RELEASE_NAME: "chart-case"
   NAMESPACE: "default"
   HELM_CHART_DIR: "./chart-case"
   VALUES_FILE: "./chart-case/values.yml"
-  DOCKER_DRIVER: overlay2  # Docker'ın kullandığı dosya sistemini belirtir.
+
+before_script:
+  - echo "Logging into Docker Hub..."
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin  # Docker Hub'a giriş
 
 # Docker imajını oluşturma ve push işlemi
 build:
   stage: build
-  image: docker:latest  # Docker imajını çalıştıracak
+  image: docker:latest  # Docker imajı
   services:
-    - docker:dind  # Docker-in-Docker servisini başlatıyoruz.
+    - docker:dind  # Docker-in-Docker servisini başlatıyoruz
   script:
     - echo "Building Docker image..."
-    - docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
-    - docker push $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+    - docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$CI_COMMIT_REF_NAME .
+    - docker push $DOCKER_REGISTRY/$IMAGE_NAME:$CI_COMMIT_REF_NAME
   only:
     - main  # Bu iş sadece main branch'inde çalışacak
 
 # Deploy işlemi - production (main branch)
 deploy_main:
   stage: deploy
-  image: node:16  # Node.js Docker imajı (veya başka bir imaj)
+  image: node:16  # Node.js Docker imajı
   script:
     - echo "Deploying to production (main branch)..."
     - helm upgrade --install $HELM_RELEASE_NAME $HELM_CHART_DIR -f $VALUES_FILE --namespace $NAMESPACE
   only:
     - main
+
+# Deploy işlemi - staging branch
+deploy_staging:
+  stage: deploy
+  image: node:16  # Node.js Docker imajı
+  script:
+    - echo "Deploying to staging..."
+    - helm upgrade --install $HELM_RELEASE_NAME $HELM_CHART_DIR -f $VALUES_FILE --namespace $NAMESPACE
+  only:
+    - staging

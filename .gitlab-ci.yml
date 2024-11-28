@@ -9,21 +9,29 @@ variables:
   NAMESPACE: "default"
   HELM_CHART_DIR: "./chart-case"
   VALUES_FILE: "./chart-case/values.yml"
+  DOCKER_DRIVER: "overlay2" # Docker için sürücü belirt
 
 # Docker imajını oluşturma ve push işlemi
 build:
   stage: build
-  image: node:16  # Node.js Docker imajı
+  image: docker:latest  # Docker'ın en son sürümünü kullanalım
+  services:
+    - docker:19.03.12-dind  # Docker-in-Docker servisini ekliyoruz
   script:
     - echo "Building Docker image..."
     - |
-      if [ "$CI_COMMIT_REF_NAME" == "main" ]; then
-        export IMAGE_TAG="latest"
-      elif [ "$CI_COMMIT_REF_NAME" == "staging" ]; then
-        export IMAGE_TAG="staging"
-      else
-        export IMAGE_TAG="dev"
-      fi
+      # Branch adı göre uygun IMAGE_TAG değerini belirleyelim
+      case "$CI_COMMIT_REF_NAME" in
+        "main")
+          export IMAGE_TAG="latest"
+          ;;
+        "staging")
+          export IMAGE_TAG="staging"
+          ;;
+        *)
+          export IMAGE_TAG="dev"
+          ;;
+      esac
     - echo "Tagging Docker image as $IMAGE_TAG"
     - docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
     - docker push $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG

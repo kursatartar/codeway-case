@@ -14,7 +14,7 @@ variables:
 
 before_script:
   - echo "Logging into Docker Hub..."
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin  # Docker Hub'a giriş
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER"   # Docker Hub'a giriş
 
 # Docker imajını oluşturma ve push işlemi
 build:

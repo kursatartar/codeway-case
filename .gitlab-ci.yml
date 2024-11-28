@@ -9,11 +9,17 @@ variables:
   NAMESPACE: "default"
   HELM_CHART_DIR: "./chart-case"
   VALUES_FILE: "./chart-case/values.yml"
-  KUBECONFIG: "/root/.kube/config"  # Kubernetes config dosyasının yolu
+  ARGOCD_SERVER: "your-argocd-server"  # ArgoCD sunucunuzun adresi
+  ARGOCD_PROJECT: "your-argocd-project"  # ArgoCD projeniz
+  GIT_REPO_URL: "https://gitlab.com/kursat8/case-study.git"  # Gitlab repository URL'niz
 
 before_script:
   - echo "Logging into Docker Hub..."
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin  # Docker Hub'a giriş
+  - apk add --no-cache curl
+  - curl -fsSL https://get.helm.sh/helm-v3.10.1-linux-amd64.tar.gz | tar -xzv
+  - mv linux-amd64/helm /usr/local/bin/helm
+  - curl -sSL https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml | kubectl apply -f - # ArgoCD kurulumu
 
 # Docker imajını oluşturma ve push işlemi
 build:
@@ -28,21 +34,22 @@ build:
   only:
     - main  # Bu iş sadece main branch'inde çalışacak
 
-# Deploy işlemi - production (main branch)
+# ArgoCD'ye entegrasyon ve dağıtım işlemi
 deploy_main:
   stage: deploy
-  image: docker:latest
-  services:
-    - docker:dind
+  image: alpine:latest  # Hafif bir imaj kullanabiliriz
   before_script:
+    - echo "Setting up ArgoCD CLI..."
     - apk add --no-cache curl
-    - curl -fsSL https://get.helm.sh/helm-v3.10.1-linux-amd64.tar.gz | tar -xzv
-    - mv linux-amd64/helm /usr/local/bin/helm
-    - mkdir -p /root/.kube  # kubeconfig dosyasını oluşturacak dizini oluşturuyoruz
-    - echo "$KUBECONFIG" > /root/.kube/config  # GitLab CI ortam değişkenlerinden kubeconfig'i alıp kaydediyoruz
+    - curl -sSL https://github.com/argoproj/argo-cd/releases/download/v2.9.8/argocd-linux-amd64 -o /usr/local/bin/argocd
+    - chmod +x /usr/local/bin/argocd
+    - echo "Authenticating with ArgoCD..."
+    - argocd login $ARGOCD_SERVER --username admin --password $ARGOCD_PASSWORD --insecure # ArgoCD'ye giriş
+    - argocd app sync $ARGOCD_PROJECT # ArgoCD projesi ile senkronizasyon
   script:
-    - export KUBERNETES_MASTER=https://127.0.0.1:63670
-    - echo "Deploying to production (main branch)..."
-    - helm upgrade --install $HELM_RELEASE_NAME $HELM_CHART_DIR -f $VALUES_FILE --namespace $NAMESPACE
+    - echo "Deploying to production using ArgoCD..."
+    - kubectl apply -f $HELM_CHART_DIR -n $NAMESPACE  # Helm chart'ı ile uygulamayı dağıt
+    - argocd app set $ARGOCD_PROJECT --sync-policy automated --auto-prune # ArgoCD ile sürekli dağıtım
   only:
-    - main
+    - main  # Yalnızca main branch'inde dağıtım yapacak
+

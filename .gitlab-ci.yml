@@ -9,7 +9,7 @@ variables:
   NAMESPACE: "default"
   HELM_CHART_DIR: "./chart-case"
   VALUES_FILE: "./chart-case/values.yml"
-  KUBECONFIG: "/root/.kube/config"  # Kubernetes config dosyasının yolu
+  KUBECONFIG: "/Users/kursatartar/.kube/config"  # Kubernetes config dosyasının yolu
   DOCKER_PASSWORD: "Kursat098-"
   DOCKER_USER: "kursatartar"
  

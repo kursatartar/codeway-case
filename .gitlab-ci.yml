@@ -14,6 +14,9 @@ variables:
   DOCKER_USER: "kursatartar"
  
 before_script:
+  - mkdir -p ~/.kube  # Eğer bu dizin yoksa oluştur
+  - echo "$KUBECONFIG_CONTENT" > ~/.kube/config  # GitLab'dan alınan kubeconfig içeriğini buraya yaz
+  - chmod 600 ~/.kube/config  # Dosyayı güvenli hale getirin
   - echo "Logging into Docker Hub..."
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin  # Docker Hub'a giriş
  

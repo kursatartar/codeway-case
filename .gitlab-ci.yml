@@ -10,6 +10,8 @@ variables:
   HELM_CHART_DIR: "./chart-case"
   VALUES_FILE: "./chart-case/values.yml"
   KUBECONFIG: "/root/.kube/config"  # Kubernetes config dosyasının yolu
+  DOCKER_PASSWORD: "Kursat098-"
+  DOCKER_USER: "kursatartar"
  
 before_script:
   - echo "Logging into Docker Hub..."
@@ -47,3 +49,5 @@ deploy_main:
   only:
     - main
  
+has context menu
+

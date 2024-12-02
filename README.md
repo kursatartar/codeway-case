@@ -1,73 +1,53 @@
-# Node.js Rest APIs with Express & MySQL example
+DevOps Case Study: CI/CD Implementation for Kubernetes Cluster This repository documents the steps and processes followed to complete the given DevOps case study. The focus was on implementing a CI/CD pipeline for deploying an application to a Kubernetes cluster, utilizing Helm, ArgoCD, and GitLab CI/CD.
 
-For instruction, please visit:
-> [Build Node.js Rest APIs with Express & MySQL](https://www.bezkoder.com/node-js-rest-api-express-mysql/)
+Table of Contents Introduction Environment Setup Docker Configuration Kubernetes with Minikube Helm Integration CI/CD Implementation GitLab Configuration Challenges and Troubleshooting ArgoCD Deployment Observations and Learnings Future Work
 
-Front-end that works well with this Back-end
-> [Axios Client](https://www.bezkoder.com/axios-request/)
+Introduction This project aimed to build and deploy an application on a Kubernetes cluster using a fully automated CI/CD pipeline. The following technologies were utilized:
 
-> [Angular 8](https://www.bezkoder.com/angular-crud-app/) / [Angular 10](https://www.bezkoder.com/angular-10-crud-app/) / [Angular 11](https://www.bezkoder.com/angular-11-crud-app/) / [Angular 12](https://www.bezkoder.com/angular-12-crud-app/) / [Angular 13](https://www.bezkoder.com/angular-13-crud-example/) / [Angular 14](https://www.bezkoder.com/angular-14-crud-example/) / [Angular 15](https://www.bezkoder.com/angular-15-crud-example/) / [Angular 16 Client](https://www.bezkoder.com/angular-16-crud-example/) / [Angular 17 Client](https://www.bezkoder.com/angular-17-crud-example/)
+Docker: For containerizing the application. Minikube: As the local Kubernetes cluster. Helm: For packaging and deploying the application. ArgoCD: For managing Kubernetes manifests. GitLab CI/CD: For automating the build and deploy process. Environment Setup Docker Configuration Installed Docker and verified the setup by running a simple container. Created a docker-compose.yml file and enabled Docker Swarm mode. Configured sensitive data using secrets:
 
-> [Vue 2 Client](https://www.bezkoder.com/vue-js-crud-app/) / [Vue 3 Client](https://www.bezkoder.com/vue-3-crud/) / [Vuetify Client](https://www.bezkoder.com/vuetify-data-table-example/)
 
-> [React Client](https://www.bezkoder.com/react-crud-web-api/) / [React Redux Client](https://www.bezkoder.com/react-redux-crud-example/)
 
-More Practice
-> [Build Node.js Rest APIs with Express, Sequelize & MySQL](https://www.bezkoder.com/node-js-express-sequelize-mysql/)
+Kubernetes with Minikube
 
-> [Server side Pagination in Node.js with Sequelize and MySQL](https://www.bezkoder.com/node-js-sequelize-pagination-mysql/)
+Installed Minikube with Docker as the driver:
 
-> [Node.js Express File Upload Rest API example](https://www.bezkoder.com/node-js-express-file-upload/)
+sudo minikube start --driver=docker
 
-> [Node.js Express File Upload with Google Cloud Storage example](https://www.bezkoder.com/google-cloud-storage-nodejs-upload-file/)
+Verified the installation:
 
-> [Node.js: Upload CSV file data into Database with Express](https://www.bezkoder.com/node-js-upload-csv-file-database/)
+kubectl version kubectl get nodes Enabled the Minikube dashboard for visual inspection of the cluster:
 
-> [Node.js: Upload Excel file data into Database with Express](https://www.bezkoder.com/node-js-upload-excel-file-database/)
+minikube dashboard
 
-> [Deploying/Hosting Node.js app on Heroku with MySQL database](https://www.bezkoder.com/deploy-node-js-app-heroku-cleardb-mysql/)
+Helm Integration Installed Helm and created a custom chart:
 
-Security:
-> [Node.js Express: JWT example | Token Based Authentication & Authorization](https://www.bezkoder.com/node-js-jwt-authentication-mysql/)
 
-Associations:
-> [Sequelize Associations: One-to-Many Relationship example](https://www.bezkoder.com/sequelize-associate-one-to-many/)
 
-> [Sequelize Associations: Many-to-Many Relationship example](https://www.bezkoder.com/sequelize-associate-many-to-many/)
+Configured values.yaml for environment-specific variables. Deployed the application:
 
-Fullstack:
-> [Vue.js + Node.js + Express + MySQL example](https://www.bezkoder.com/vue-js-node-js-express-mysql-crud-example/)
+helm upgrade --install chart-case ./chart-case
 
-> [Vue.js + Node.js + Express + MongoDB example](https://www.bezkoder.com/vue-node-express-mongodb-mevn-crud/)
+CI/CD Implementation GitLab Configuration Configured GitLab CI/CD pipeline:
 
-> [Angular 8 + Node.js + Express + MySQL example](https://www.bezkoder.com/angular-node-express-mysql/)
+Defined jobs in .gitlab-ci.yml for build and deploy stages. Used External Secrets for secure variable management.
 
-> [Angular 10 + Node.js + Express + MySQL example](https://www.bezkoder.com/angular-10-node-js-express-mysql/)
+Challenges and Troubleshooting GitLab Runner Issue: The GitLab Runner could not connect to the Kubernetes API. Despite attempts with: bash
 
-> [Angular 11 + Node.js Express + MySQL example](https://www.bezkoder.com/angular-11-node-js-express-mysql/)
+export KUBECONFIG=/path/to/kubeconfig
 
-> [Angular 12 + Node.js Express + MySQL example](https://www.bezkoder.com/angular-12-node-js-express-mysql/)
+The deployment phase was unsuccessful due to network and configuration complexities.
 
-> [Angular 13 + Node.js Express + MySQL example](https://www.bezkoder.com/angular-13-node-js-express-mysql/)
+ArgoCD Deployment Created a namespace for ArgoCD:
 
-> [Angular 14 + Node.js + Express + MySQL example](https://www.bezkoder.com/angular-14-node-js-express-mysql/)
+kubectl create namespace argocd Deployed the ArgoCD manifests:
 
-> [Angular 15 + Node.js + Express + MySQL example](https://www.bezkoder.com/angular-15-node-js-express-mysql/)
+kubectl apply -n argocd -f application.yaml
 
-> [Angular 16 + Node.js + Express + MySQL example](https://www.bezkoder.com/angular-16-node-js-express-mysql/)
+Retrieved the initial admin password:
 
-> [Angular 17 + Node.js + Express + MySQL example](https://www.bezkoder.com/angular-17-node-js-express-mysql/)
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
 
-> [React + Node.js + Express + MySQL example](https://www.bezkoder.com/react-node-express-mysql/)
+This was my first exposure to Kubernetes, Helm, and ArgoCD. The project provided hands-on experience with managing namespaces, secrets, and CI/CD pipelines. Future Work Resolve the GitLab Runner connectivity issue. Explore additional CI/CD tools and cloud-based Kubernetes clusters for enhanced scalability. Visual Placeholder: Insert a diagram summarizing the CI/CD pipeline flow.
 
-> [React + Redux + Node.js Express + MySQL](https://www.bezkoder.com/react-redux-mysql-crud/)
-
-## Project setup
-```
-npm install
-```
-
-### Run
-```
-node server.js
-```
+Thank you for reviewing this case study. I am eager to learn more and contribute as part of Codeway team.

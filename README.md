@@ -1,10 +1,14 @@
-DevOps Case Study: CI/CD Implementation for Kubernetes Cluster This repository documents the steps and processes followed to complete the given DevOps case study. The focus was on implementing a CI/CD pipeline for deploying an application to a Kubernetes cluster, utilizing Helm, ArgoCD, and GitLab CI/CD.
+his project aimed to build and deploy an application on a Kubernetes cluster using a fully automated CI/CD pipeline. The following technologies were utilized:
 
-Table of Contents Introduction Environment Setup Docker Configuration Kubernetes with Minikube Helm Integration CI/CD Implementation GitLab Configuration Challenges and Troubleshooting ArgoCD Deployment Observations and Learnings Future Work
+Docker: For containerizing the application. 
+Minikube: As the local Kubernetes cluster. 
+Helm: For packaging and deploying the application. ArgoCD: For managing Kubernetes manifests. 
+GitLab CI/CD: For automating the build and deploy process. 
+ArgoCD: To manage infrastructure configuration and application updates in one system.
 
-Introduction This project aimed to build and deploy an application on a Kubernetes cluster using a fully automated CI/CD pipeline. The following technologies were utilized:
-
-Docker: For containerizing the application. Minikube: As the local Kubernetes cluster. Helm: For packaging and deploying the application. ArgoCD: For managing Kubernetes manifests. GitLab CI/CD: For automating the build and deploy process. Environment Setup Docker Configuration Installed Docker and verified the setup by running a simple container. Created a docker-compose.yml file and enabled Docker Swarm mode. Configured sensitive data using secrets:
+Environment Setup Docker Configuration Installed Docker and verified the setup by running a simple container. 
+Created a docker-compose.yml file and enabled Docker Swarm mode. 
+Configured sensitive data using secrets.
 
 
 

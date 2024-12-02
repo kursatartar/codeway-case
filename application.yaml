@@ -1,19 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nodejs-express-mysql  # Uygulama adı
-  namespace: argocd           # ArgoCD'nin kurulu olduğu namespace
+  name: nodejs-express-mysql  # app name
+  namespace: argocd           # argocd namespace
 spec:
-  project: default            # ArgoCD'deki proje adı (varsayılan: default)
+  project: default            # default value for argocd
   source:
-    repoURL: 'https://github.com/kursatartar/codeway-case.git'  # Proje repo URL'si
-    targetRevision: main       # Git branch (örnek: main)
-    path: chart-case           # Helm chart'ın bulunduğu dizin
+    repoURL: 'https://github.com/kursatartar/codeway-case.git'  
+    targetRevision: main       # git branch
+    path: chart-case           # directory
   destination:
-    server: 'https://kubernetes.default.svc'  # Kubernetes API server adresi (default küme içi erişim)
-    namespace: nodejs-app      # Uygulamanın yükleneceği namespace
+    server: 'https://kubernetes.default.svc'  # kubernetes api
+    namespace: nodejs-app      
   syncPolicy:
     automated:
-      prune: true              # Eski kaynakları temizler
-      selfHeal: true           # Kubernetes ile durum uyumsuzsa düzeltir
+      prune: true              
+      selfHeal: true       
 

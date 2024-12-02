@@ -1,4 +1,4 @@
-his project aimed to build and deploy an application on a Kubernetes cluster using a fully automated CI/CD pipeline. The following technologies were utilized:
+This project aimed to build and deploy an application on a Kubernetes cluster using a fully automated CI/CD pipeline. The following technologies were utilized:
 
 Docker: For containerizing the application. 
 Minikube: As the local Kubernetes cluster. 

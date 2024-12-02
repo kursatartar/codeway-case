@@ -9,31 +9,29 @@ variables:
   NAMESPACE: "default"
   HELM_CHART_DIR: "./chart-case"
   VALUES_FILE: "./chart-case/values.yml"
-  KUBECONFIG: "/Users/kursatartar/.kube/config"  # Kubernetes config dosyasının yolu
+  KUBECONFIG: "/Users/kursatartar/.kube/config"  # KUBECONFIG
   DOCKER_PASSWORD: "password"
   DOCKER_USER: "kursatartar"
  
 before_script:
-  - mkdir -p ~/.kube  # Eğer bu dizin yoksa oluştur
-  - echo "$KUBECONFIG_CONTENT" > ~/.kube/config  # GitLab'dan alınan kubeconfig içeriğini buraya yaz
-  - chmod 600 ~/.kube/config  # Dosyayı güvenli hale getirin
+  - mkdir -p ~/.kube  # create 
+  - echo "$KUBECONFIG_CONTENT" > ~/.kube/config  # kubeconfig content
+  - chmod 600 ~/.kube/config  
   - echo "Logging into Docker Hub..."
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin  # Docker Hub'a giriş
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin  
  
-# Docker imajını oluşturma ve push işlemi
 build:
   stage: build
-  image: docker:latest  # Docker imajı
+  image: docker:latest  
   services:
-    - docker:dind  # Docker-in-Docker servisini başlatıyoruz
+    - docker:dind  # for gitlab sync
   script:
     - echo "Building Docker image..."
     - docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$CI_COMMIT_REF_NAME .
     - docker push $DOCKER_REGISTRY/$IMAGE_NAME:$CI_COMMIT_REF_NAME
   only:
-    - main  # Bu iş sadece main branch'inde çalışacak
- 
-# Deploy işlemi - production (main branch)
+    - main  
+    
 deploy_main:
   stage: deploy
   image: docker:latest
@@ -44,7 +42,7 @@ deploy_main:
     - curl -fsSL https://get.helm.sh/helm-v3.10.1-linux-amd64.tar.gz | tar -xzv
     - mv linux-amd64/helm /usr/local/bin/helm
     - mkdir -p /root/.kube  # kubeconfig dosyasını oluşturacak dizini oluşturuyoruz
-    - echo "$KUBECONFIG" > /root/.kube/config  # GitLab CI ortam değişkenlerinden kubeconfig'i alıp kaydediyoruz
+    - echo "$KUBECONFIG" > /root/.kube/config  
   script:
     - export KUBERNETES_MASTER=https://127.0.0.1:63670
     - echo "Deploying to production (main branch)..."

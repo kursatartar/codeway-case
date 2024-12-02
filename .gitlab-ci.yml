@@ -51,6 +51,3 @@ deploy_main:
     - helm upgrade --install $HELM_RELEASE_NAME $HELM_CHART_DIR -f $VALUES_FILE --namespace $NAMESPACE
   only:
     - main
- 
-has context menu
-
